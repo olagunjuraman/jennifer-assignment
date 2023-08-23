@@ -8,6 +8,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    environment: DEV # <-- Specify the environment here
 
     steps:
       - name: Checkout code
@@ -21,16 +22,13 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t DOCKER_HUB_USERNAME/REPOSITORY_NAME:latest .
-          docker push DOCKER_HUB_USERNAME/REPOSITORY_NAME:latest
+          docker build -t olagunju/jennifer:latest .
+          docker push olagunju/jennifer:latest
 
       - name: Deploy to Elastic Beanstalk
         run: |
           pip install awsebcli
-          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> 
+          echo "aws_access_key_id = ${{ secrets.AWS_ACCESS_KEY }}" >> ~/.aws/credentials
           echo "aws_secret_access_key = ${{ secrets.AWS_SECRET_KEY }}" >> ~/.aws/credentials
           echo "region = us-east-1" >> ~/.aws/config
           eb deploy
-        env:
-          AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_KEY: ${{ secrets.AWS_SECRET_KEY }}
